@@ -1,6 +1,9 @@
 package barberiapelofino;
 
-public class Cliente extends Usuario{
+import java.io.Serializable;
+
+public class Cliente extends Usuario implements Serializable{
+    private static final long serialVesionUID = 1L;
 
     public Cliente() {
     }
