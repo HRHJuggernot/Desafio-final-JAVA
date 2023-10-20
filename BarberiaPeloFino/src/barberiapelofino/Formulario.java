@@ -61,4 +61,10 @@ public class Formulario {
                 throw new AssertionError();
         }
     }
+    
+    public void inicioSecion(){
+        String cedula = JOptionPane.showInputDialog("Ingrese tu cedula");
+        
+        
+    }
 }

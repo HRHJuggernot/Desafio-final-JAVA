@@ -8,7 +8,7 @@ public class Crud {
     
     public void guardarBarbero() throws IOException {
         Barbero barbero = new Barbero();
-        barbero.setId((int) (Math.random() * (100 - 1 + 1)) + 1);
+        barbero.setCedula(JOptionPane.showInputDialog("Ingrese tu cedula"));
         barbero.setNombre(JOptionPane.showInputDialog("Ingrese tu nombre"));
         barbero.setApellido(JOptionPane.showInputDialog("Ingrese tu apellido"));
         barbero.setCorreo(JOptionPane.showInputDialog("Ingrese tu correo"));
@@ -42,7 +42,7 @@ public class Crud {
     
     public void guardarCliente() throws IOException {
         Cliente cliente = new Cliente();
-        cliente.setId((int) (Math.random() * (100 - 1 + 1)) + 1);
+        cliente.setCedula(JOptionPane.showInputDialog("Ingrese tu cedula"));
         cliente.setNombre(JOptionPane.showInputDialog("Ingrese tu nombre"));
         cliente.setApellido(JOptionPane.showInputDialog("Ingrese tu apellido"));
         cliente.setCorreo(JOptionPane.showInputDialog("Ingrese tu correo"));
@@ -71,6 +71,22 @@ public class Crud {
         }catch(FileNotFoundException e){
             e.printStackTrace(System.out);
         }
-         
+       
+    }
+    
+    public String buscarBarbero(cedula){
+        try (BufferedReader br = new BufferedReader(new FileReader(listabarbero.txt))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                if (linea.contains(cedula)) {
+                    System.out.println("El string está presente en el archivo.");
+                    // Puedes agregar aquí cualquier otra lógica que necesites.
+                    break; // Si deseas detener la búsqueda después del primer hallazgo.
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        }
+        
     }
 }

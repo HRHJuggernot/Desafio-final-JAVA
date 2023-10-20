@@ -8,8 +8,16 @@ public class Cliente extends Usuario implements Serializable{
     public Cliente() {
     }
 
-    public Cliente(String nombre, String apellido, String correo, String estado, int id) {
-        super(nombre, apellido, correo, estado, id);
+    public Cliente(String cedula, String apellido, String correo, String estado) {
+        super(cedula, apellido, correo, estado);
+    }
+
+    public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
     }
 
     public String getNombre() {
@@ -42,14 +50,6 @@ public class Cliente extends Usuario implements Serializable{
 
     public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
     
 }

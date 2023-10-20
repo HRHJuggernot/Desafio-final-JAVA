@@ -9,12 +9,8 @@ public class Barbero extends Usuario implements Serializable{
     public Barbero() {
     }
 
-    public Barbero(boolean disponible) {
-        this.disponible = disponible;
-    }
-
-    public Barbero(boolean disponible, String nombre, String apellido, String correo, String estado, int id) {
-        super(nombre, apellido, correo, estado, id);
+    public Barbero(boolean disponible, String cedula, String apellido, String correo, String estado) {
+        super(cedula, apellido, correo, estado);
         this.disponible = disponible;
     }
 
@@ -24,6 +20,14 @@ public class Barbero extends Usuario implements Serializable{
 
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
+    }
+
+    public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
     }
 
     public String getNombre() {
@@ -56,14 +60,6 @@ public class Barbero extends Usuario implements Serializable{
 
     public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
     
 }
