@@ -24,7 +24,7 @@ public class Formulario {
                 menuBaberoOCliente();
                 break;
             case 2:
-                //pendiente
+                inicioSecion();
                 break; 
              case 3:
                 System.exit(0);
@@ -64,7 +64,54 @@ public class Formulario {
     
     public void inicioSecion(){
         String cedula = JOptionPane.showInputDialog("Ingrese tu cedula");
-        
+        //cosualtarUsuario(cedula)
         
     }
+    
+    public void consultarUsuario(String cedula){
+        Crud buscar = new Crud();
+        opcion = Integer.parseInt(JOptionPane.showInputDialog("Seleccione una opcion"
+                                    + "\n1.Babero \n2.Cliente \n3.Volver \n\n"));
+        
+        switch (opcion) {
+            case 1:
+                buscar.buscarBarbero(cedula);
+                menuBarbero();
+            case 2:
+                /*
+                try{
+                    //manipularArchivos.guardarCliente();
+                }catch(Exception e){
+                    e.printStackTrace(System.out);
+                }
+                break;
+                */
+             case 3:
+                menuPrincipal();
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+    
+    public void menuBarbero(){
+        opcion = Integer.parseInt(JOptionPane.showInputDialog("Seleccione una opcion"
+                                    + "\n1.Modificar datos \n2.Ver citas \n3.Volver \n\n"));
+        
+        switch (opcion) {
+            case 1:
+                //actualizarBarbero();
+                break;
+            case 2:
+                
+                break; 
+             case 3:
+                menuPrincipal();
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+    
+    
 }

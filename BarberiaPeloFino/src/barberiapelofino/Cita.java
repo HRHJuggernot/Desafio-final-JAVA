@@ -1,11 +1,13 @@
 package barberiapelofino;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Cita {
-    int id;
-    LocalDate fechaInicio, fechaFinal;
-    String estado;
+public class Cita implements Serializable{
+    private static final long serialVesionUID = 1L;
+    private int id;
+    private LocalDate fechaInicio, fechaFinal;
+    private String estado;
 
     public Cita() {
     }
