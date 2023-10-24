@@ -3,10 +3,14 @@ package barberiapelofino;
 import java.io.FileNotFoundException;
 import javax.swing.JOptionPane;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Formulario {
     int opcion;
+    String cedulaUsuario;
     Crud manipularArchivos = new Crud();
+    Barbero barbero = new Barbero();
 
     public Formulario() {
     }
@@ -42,6 +46,7 @@ public class Formulario {
             case 1:
                 try{
                     manipularArchivos.guardarBarbero();
+                    manipularArchivos.crearHorario();
                 }catch(Exception e){
                     e.printStackTrace(System.out);
                 }
@@ -64,7 +69,7 @@ public class Formulario {
     
     public void inicioSecion(){
         String cedula = JOptionPane.showInputDialog("Ingrese tu cedula");
-        //cosualtarUsuario(cedula)
+        cedulaUsuario = cedula;
         
     }
     
@@ -100,12 +105,43 @@ public class Formulario {
         
         switch (opcion) {
             case 1:
-                //actualizarBarbero();
+            {
+                try {
+                    manipularArchivos.actualizarBarbero(cedulaUsuario);
+                } catch (IOException ex) {
+                    
+                }
+            }
                 break;
+
             case 2:
-                
+                manipularArchivos.verCitas();
                 break; 
              case 3:
+                menuPrincipal();
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+    
+    public void menuCliente(){
+        opcion = Integer.parseInt(JOptionPane.showInputDialog("Seleccione una opcion"
+                                    + "\n1.Agendar una cita \n2.Ver horarios de barberos \n3.Eliminar cita"
+                                    + "\n4.Modificar datos \n\n"));
+        
+        switch (opcion) {
+            case 1:
+                manipularArchivos.creaCita();
+                break;
+
+            case 2:
+                manipularArchivos.verCitas();
+                break; 
+             case 3:
+                menuPrincipal();
+                break;
+            case 4:
                 menuPrincipal();
                 break;
             default:

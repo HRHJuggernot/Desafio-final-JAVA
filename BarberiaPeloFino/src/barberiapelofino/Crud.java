@@ -3,6 +3,7 @@ package barberiapelofino;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.HashMap;
 import javax.swing.JOptionPane;
 
 public class Crud {
@@ -90,6 +91,69 @@ public class Crud {
         }
     }
     
+    public void crearHorario(){
+        Horarios horario = new Horarios();
+        horario.setId(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el id")));
+        
+        // Obtener la fecha de inicio como cadena
+        String horaInicioStr = JOptionPane.showInputDialog("Ingrese la hora de inicio (yyyy-MM-dd):");
+
+        // Validar y convertir la cadena en un objeto LocalDate
+        LocalDate horaInicio = null;
+        try {
+            horaInicio = LocalDate.parse(horaInicioStr);
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto. Utilice el formato yyyy-MM-dd.");
+            // Puedes manejar el error de otra manera, como mostrar un mensaje de error al usuario.
+        }
+
+        if (horaInicio != null) {
+            // Repite el mismo proceso para la fecha final si es necesario
+            String horaFinalStr = JOptionPane.showInputDialog("Ingrese la hora final (yyyy-MM-dd):");
+            LocalDate horaFinal = null;
+            try {
+                horaFinal = LocalDate.parse(horaFinalStr);
+            } catch (DateTimeParseException e) {
+                JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto. Utilice el formato yyyy-MM-dd.");
+                // Puedes manejar el error de otra manera, como mostrar un mensaje de error al usuario.
+            }
+
+            if (horaFinal != null) {
+                // Las fechas son válidas, ahora puedes usarlas como sea necesario.
+                horario.setHoraInicio(horaInicio);
+                horario.setHoraFinal(horaFinal);
+                // Realiza otras operaciones con la cita si es necesario.
+            }
+        }
+        
+        public void eliminarCita(int id){
+            
+        }
+        
+        //Gestionar el archivo
+        try{
+            archivo = new File("horarios.txt");
+            
+            if(archivo.exists()){
+                FileOutputStream apertura = new FileOutputStream("horarios.txt",true);
+                //Mandar el objeto sin cabecera
+                MiObjectOutputStream salida = new MiObjectOutputStream(apertura);
+                salida.writeObject(horario);
+                apertura.close();
+                salida.close();
+                
+            }else{
+                FileOutputStream apertura1 = new FileOutputStream("horarios.txt",true);
+                ObjectOutputStream salida1 = new ObjectOutputStream(apertura1);
+                salida1.writeObject(horario);
+                apertura1.close();
+                salida1.close();
+            }
+        }catch (Exception e){
+            
+        }
+    }
+    
     public void creaCita(){
         Cita cita = new Cita();
         cita.setId(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el id")));
@@ -151,24 +215,81 @@ public class Crud {
         }
     }
     
-    public void actualizarBarbero(HashMap<Integer, Perro> hashSelecionado, String nombreArchivo){
-        archivo = new File(nombreArchivo);
+    public void verCitas(){
+        File fichero = new File("citas.txt");
+        
+        try{
+            BufferedReader lectura = new BufferedReader(new FileReader(fichero));
+            String linea;
             
-         try{
-            if(archivo.exists()){
-                FileOutputStream archivoOut = new FileOutputStream(nombreArchivo, true);
-                ObjectOutputStream salida = new ObjectOutputStream(archivoOut);
-
-                for(Perro perro: hashSelecionado.values()){
-                    salida.writeObject(perro);
-                }
-                    
-                archivoOut.close();
-                salida.close();
-                }
+            while((linea = lectura.readLine().trim()) != null){
+                String datos[] = linea.split(",");
+                
+                System.out.println(linea);
+            }
+            
+            lectura.close();
         }catch (Exception e){
-            
+            // Manejo de excepciones, puedes imprimir un mensaje de error si lo deseas.
+            e.printStackTrace();
         }
     }
+    
+    public void actualizarBarbero(String cedula) throws IOException {
+    // Crear un nuevo objeto Barbero con la información actualizada
+    Barbero barberoActualizado = new Barbero();
+    barberoActualizado.setCedula(cedula);
+    barberoActualizado.setNombre(JOptionPane.showInputDialog("Ingrese el nuevo nombre"));
+    barberoActualizado.setApellido(JOptionPane.showInputDialog("Ingrese el nuevo apellido"));
+    barberoActualizado.setCorreo(JOptionPane.showInputDialog("Ingrese el nuevo correo"));
+    barberoActualizado.setEstado("Barbero");
+    
+    // Crear un archivo temporal para almacenar los barberos actualizados
+    File archivoTemporal = new File("temporal.txt");
+
+    try {
+        FileInputStream entrada = new FileInputStream("listabarbero.txt");
+        ObjectInputStream ois = new ObjectInputStream(entrada);
+        
+        FileOutputStream salida = new FileOutputStream("temporal.txt");
+        ObjectOutputStream oos = new ObjectOutputStream(salida);
+
+        Barbero barbero;
+        boolean encontrado = false;
+
+        while (entrada.available() > 0) {
+            // Leer un objeto Barbero del archivo
+            barbero = (Barbero) ois.readObject();
+
+            if (barbero.getCedula().equals(cedula)) {
+                // Reemplazar el objeto antiguo con el objeto actualizado
+                oos.writeObject(barberoActualizado);
+                encontrado = true;
+            } else {
+                // Escribir el objeto sin cambios en el archivo temporal
+                oos.writeObject(barbero);
+            }
+        }
+
+        ois.close();
+        oos.close();
+        entrada.close();
+        salida.close();
+
+        if (encontrado) {
+            // Reemplazar el archivo original con el archivo temporal
+            File archivoOriginal = new File("listabarbero.txt");
+            archivoTemporal.renameTo(archivoOriginal);
+            archivoTemporal.delete();
+            System.out.println("Barbero actualizado con éxito.");
+        } else {
+            System.out.println("Barbero no encontrado en el archivo.");
+        }
+    } catch (FileNotFoundException e) {
+        e.printStackTrace(System.out);
+    } catch (ClassNotFoundException e) {
+        e.printStackTrace(System.out);
+    }
+}
     
 }
