@@ -126,10 +126,6 @@ public class Crud {
             }
         }
         
-        public void eliminarCita(int id){
-            
-        }
-        
         //Gestionar el archivo
         try{
             archivo = new File("horarios.txt");
@@ -154,6 +150,47 @@ public class Crud {
         }
     }
     
+    public void eliminarCita(int id){
+        File archivoOriginal = new File("citas.txt");
+        File archivoTemporal = new File("citas_temporal.txt");
+
+        try {
+            BufferedReader lectura = new BufferedReader(new FileReader(archivoOriginal));
+            BufferedWriter escritura = new BufferedWriter(new FileWriter(archivoTemporal));
+            String linea;
+
+            while ((linea = lectura.readLine()) != null) {
+                // Dividir la línea en datos usando la coma como separador
+                String[] datos = linea.split(",");
+
+                // Obtener el ID de la cita de la línea
+                int idCita = Integer.parseInt(datos[0]);
+
+                // Comprobar si el ID coincide con el ID que deseas eliminar
+                if (idCita == id) {
+                    // No escribir esta línea en el archivo temporal (omitir la cita)
+                    continue;
+                }
+
+                // Escribir la línea en el archivo temporal
+                escritura.write(linea);
+                escritura.newLine();
+            }
+
+            // Cerrar los archivos
+            lectura.close();
+            escritura.close();
+
+            // Borrar el archivo original
+            archivoOriginal.delete();
+
+            // Renombrar el archivo temporal al nombre del archivo original
+            archivoTemporal.renameTo(archivoOriginal);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }    
+    }
+    
     public void creaCita(){
         Cita cita = new Cita();
         cita.setId(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el id")));
@@ -167,7 +204,6 @@ public class Crud {
             fechaInicio = LocalDate.parse(fechaInicioStr);
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto. Utilice el formato yyyy-MM-dd.");
-            // Puedes manejar el error de otra manera, como mostrar un mensaje de error al usuario.
         }
 
         if (fechaInicio != null) {
@@ -178,14 +214,12 @@ public class Crud {
                 fechaFinal = LocalDate.parse(fechaFinalStr);
             } catch (DateTimeParseException e) {
                 JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto. Utilice el formato yyyy-MM-dd.");
-                // Puedes manejar el error de otra manera, como mostrar un mensaje de error al usuario.
             }
 
             if (fechaFinal != null) {
                 // Las fechas son válidas, ahora puedes usarlas como sea necesario.
                 cita.setFechaInicio(fechaInicio);
                 cita.setFechaFinal(fechaFinal);
-                // Realiza otras operaciones con la cita si es necesario.
             }
         }
         
@@ -236,60 +270,116 @@ public class Crud {
     }
     
     public void actualizarBarbero(String cedula) throws IOException {
-    // Crear un nuevo objeto Barbero con la información actualizada
-    Barbero barberoActualizado = new Barbero();
-    barberoActualizado.setCedula(cedula);
-    barberoActualizado.setNombre(JOptionPane.showInputDialog("Ingrese el nuevo nombre"));
-    barberoActualizado.setApellido(JOptionPane.showInputDialog("Ingrese el nuevo apellido"));
-    barberoActualizado.setCorreo(JOptionPane.showInputDialog("Ingrese el nuevo correo"));
-    barberoActualizado.setEstado("Barbero");
+        // Crear un nuevo objeto Barbero con la información actualizada
+        Barbero barberoActualizado = new Barbero();
+        barberoActualizado.setCedula(cedula);
+        barberoActualizado.setNombre(JOptionPane.showInputDialog("Ingrese el nuevo nombre"));
+        barberoActualizado.setApellido(JOptionPane.showInputDialog("Ingrese el nuevo apellido"));
+        barberoActualizado.setCorreo(JOptionPane.showInputDialog("Ingrese el nuevo correo"));
+        barberoActualizado.setEstado("Barbero");
     
-    // Crear un archivo temporal para almacenar los barberos actualizados
-    File archivoTemporal = new File("temporal.txt");
+        // Crear un archivo temporal para almacenar los barberos actualizados
+        File archivoTemporal = new File("temporal.txt");
 
-    try {
-        FileInputStream entrada = new FileInputStream("listabarbero.txt");
-        ObjectInputStream ois = new ObjectInputStream(entrada);
+        try {
+            FileInputStream entrada = new FileInputStream("listabarbero.txt");
+            ObjectInputStream ois = new ObjectInputStream(entrada);
         
-        FileOutputStream salida = new FileOutputStream("temporal.txt");
-        ObjectOutputStream oos = new ObjectOutputStream(salida);
+            FileOutputStream salida = new FileOutputStream("temporal.txt");
+            ObjectOutputStream oos = new ObjectOutputStream(salida);
 
-        Barbero barbero;
-        boolean encontrado = false;
+            Barbero barbero;
+            boolean encontrado = false;
 
-        while (entrada.available() > 0) {
-            // Leer un objeto Barbero del archivo
-            barbero = (Barbero) ois.readObject();
+            while (entrada.available() > 0) {
+                // Leer un objeto Barbero del archivo
+                barbero = (Barbero) ois.readObject();
 
-            if (barbero.getCedula().equals(cedula)) {
-                // Reemplazar el objeto antiguo con el objeto actualizado
-                oos.writeObject(barberoActualizado);
-                encontrado = true;
-            } else {
-                // Escribir el objeto sin cambios en el archivo temporal
-                oos.writeObject(barbero);
+                if (barbero.getCedula().equals(cedula)) {
+                    // Reemplazar el objeto antiguo con el objeto actualizado
+                    oos.writeObject(barberoActualizado);
+                    encontrado = true;
+                } else {
+                    // Escribir el objeto sin cambios en el archivo temporal
+                    oos.writeObject(barbero);
+                }
             }
-        }
 
-        ois.close();
-        oos.close();
-        entrada.close();
-        salida.close();
+            ois.close();
+            oos.close();
+            entrada.close();
+            salida.close();
 
-        if (encontrado) {
-            // Reemplazar el archivo original con el archivo temporal
-            File archivoOriginal = new File("listabarbero.txt");
-            archivoTemporal.renameTo(archivoOriginal);
-            archivoTemporal.delete();
-            System.out.println("Barbero actualizado con éxito.");
-        } else {
-            System.out.println("Barbero no encontrado en el archivo.");
+            if (encontrado) {
+                // Reemplazar el archivo original con el archivo temporal
+                File archivoOriginal = new File("listabarbero.txt");
+                archivoTemporal.renameTo(archivoOriginal);
+                archivoTemporal.delete();
+                System.out.println("Barbero actualizado con éxito.");
+            } else {
+                System.out.println("Barbero no encontrado en el archivo.");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace(System.out);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace(System.out);
         }
-    } catch (FileNotFoundException e) {
-        e.printStackTrace(System.out);
-    } catch (ClassNotFoundException e) {
-        e.printStackTrace(System.out);
     }
-}
     
+    public void actualizarCliente(String cedula) throws IOException{
+        // Crear un nuevo objeto Cliente con la información actualizada
+        Cliente clienteActualizado = new Cliente();
+        clienteActualizado.setCedula(cedula);
+        clienteActualizado.setNombre(JOptionPane.showInputDialog("Ingrese el nuevo nombre"));
+        clienteActualizado.setApellido(JOptionPane.showInputDialog("Ingrese el nuevo apellido"));
+        clienteActualizado.setCorreo(JOptionPane.showInputDialog("Ingrese el nuevo correo"));
+        clienteActualizado.setEstado("Cliente");
+    
+        // Crear un archivo temporal para almacenar los barberos actualizados
+        File archivoTemporal = new File("temporal.txt");
+
+        try {
+            FileInputStream entrada = new FileInputStream("listacliente.txt");
+            ObjectInputStream ois = new ObjectInputStream(entrada);
+        
+            FileOutputStream salida = new FileOutputStream("temporal.txt");
+            ObjectOutputStream oos = new ObjectOutputStream(salida);
+
+            Barbero barbero;
+            boolean encontrado = false;
+
+            while (entrada.available() > 0) {
+                // Leer un objeto Barbero del archivo
+                barbero = (Barbero) ois.readObject();
+
+                if (barbero.getCedula().equals(cedula)) {
+                    // Reemplazar el objeto antiguo con el objeto actualizado
+                    oos.writeObject(clienteActualizado);
+                    encontrado = true;
+                } else {
+                    // Escribir el objeto sin cambios en el archivo temporal
+                    oos.writeObject(barbero);
+                }
+            }
+
+            ois.close();
+            oos.close();
+            entrada.close();
+            salida.close();
+
+            if (encontrado) {
+                // Reemplazar el archivo original con el archivo temporal
+                File archivoOriginal = new File("listacliente.txt");
+                archivoTemporal.renameTo(archivoOriginal);
+                archivoTemporal.delete();
+                System.out.println("Barbero actualizado con éxito.");
+            } else {
+                System.out.println("Barbero no encontrado en el archivo.");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace(System.out);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace(System.out);
+        }
+    }
 }

@@ -70,6 +70,7 @@ public class Formulario {
     public void inicioSecion(){
         String cedula = JOptionPane.showInputDialog("Ingrese tu cedula");
         cedulaUsuario = cedula;
+        consultarUsuario(cedula);
         
     }
     
@@ -83,14 +84,7 @@ public class Formulario {
                 buscar.buscarBarbero(cedula);
                 menuBarbero();
             case 2:
-                /*
-                try{
-                    //manipularArchivos.guardarCliente();
-                }catch(Exception e){
-                    e.printStackTrace(System.out);
-                }
-                break;
-                */
+                menuCliente();
              case 3:
                 menuPrincipal();
                 break;
@@ -128,7 +122,7 @@ public class Formulario {
     public void menuCliente(){
         opcion = Integer.parseInt(JOptionPane.showInputDialog("Seleccione una opcion"
                                     + "\n1.Agendar una cita \n2.Ver horarios de barberos \n3.Eliminar cita"
-                                    + "\n4.Modificar datos \n\n"));
+                                    + "\n4.Modificar datos \n5.Modificar datos \n\n"));
         
         switch (opcion) {
             case 1:
@@ -139,9 +133,19 @@ public class Formulario {
                 manipularArchivos.verCitas();
                 break; 
              case 3:
-                menuPrincipal();
+                manipularArchivos.eliminarCita(opcion);
                 break;
             case 4:
+            {
+                try {
+                    manipularArchivos.actualizarCliente(cedulaUsuario);
+                } catch (IOException ex) {
+                    
+                }
+            }
+                break;
+
+            case 5:
                 menuPrincipal();
                 break;
             default:
