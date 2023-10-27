@@ -93,7 +93,7 @@ public class Crud {
     
     public void crearHorario(){
         Horarios horario = new Horarios();
-        horario.setId(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el id")));
+        horario.setId(Integer.parseInt(JOptionPane.showInputDialog("Ingrese el id del horario")));
         
         // Obtener la fecha de inicio como cadena
         String horaInicioStr = JOptionPane.showInputDialog("Ingrese la hora de inicio (yyyy-MM-dd):");
@@ -150,46 +150,64 @@ public class Crud {
         }
     }
     
-    public void eliminarCita(int id){
-        File archivoOriginal = new File("citas.txt");
-        File archivoTemporal = new File("citas_temporal.txt");
-
-        try {
-            BufferedReader lectura = new BufferedReader(new FileReader(archivoOriginal));
-            BufferedWriter escritura = new BufferedWriter(new FileWriter(archivoTemporal));
-            String linea;
-
-            while ((linea = lectura.readLine()) != null) {
-                // Dividir la línea en datos usando la coma como separador
-                String[] datos = linea.split(",");
-
-                // Obtener el ID de la cita de la línea
-                int idCita = Integer.parseInt(datos[0]);
-
-                // Comprobar si el ID coincide con el ID que deseas eliminar
-                if (idCita == id) {
-                    // No escribir esta línea en el archivo temporal (omitir la cita)
-                    continue;
-                }
-
-                // Escribir la línea en el archivo temporal
-                escritura.write(linea);
-                escritura.newLine();
-            }
-
-            // Cerrar los archivos
-            lectura.close();
-            escritura.close();
-
-            // Borrar el archivo original
-            archivoOriginal.delete();
-
-            // Renombrar el archivo temporal al nombre del archivo original
-            archivoTemporal.renameTo(archivoOriginal);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }    
+    public void eliminarCita(){
+        int id = Integer.parseInt(JOptionPane.showInputDialog(null,"Id de la cita"));
+        Crud eliminar = new Crud();
+        eliminar.deleteCita(id, "citas.txt");    
+        
+        System.out.println("Cita eliminada");
     }
+    
+    public void deleteCita(int id, String nombreArchivo){
+        archivo = new File(nombreArchivo);
+        HashMap<Integer,Cita> hashCitas = new HashMap<>();
+        Cita cita = new Cita();
+        try{
+            if (archivo.exists()) {
+                FileInputStream archivoIn = new FileInputStream(nombreArchivo);
+                ObjectInputStream entrada = new ObjectInputStream(archivoIn);
+                
+                while(true){
+                    try{
+                        cita = (Cita) entrada.readObject();
+                        hashCitas.put(cita.getId(), cita);
+                    }catch (Exception e){
+                        break;
+                    }
+                }
+                archivoIn.close();
+                entrada.close();
+            }
+                
+            if(hashCitas.containsKey(id)){
+                hashCitas.remove(id);
+                updateCita(hashCitas, nombreArchivo);
+            }
+        }catch (Exception e){
+            
+        }
+    }
+    
+    public void updateCita(HashMap<Integer, Cita> hashSelecionado, String nombreArchivo){
+        archivo = new File(nombreArchivo);
+            
+         try{
+            if(archivo.exists()){
+                FileOutputStream archivoOut = new FileOutputStream(nombreArchivo, true);
+                ObjectOutputStream salida = new ObjectOutputStream(archivoOut);
+
+                for(Cita cita: hashSelecionado.values()){
+                    salida.writeObject(cita);
+                }
+                    
+                archivoOut.close();
+                salida.close();
+                }
+        }catch (Exception e){
+            
+        }
+    }
+    
     
     public void creaCita(){
         Cita cita = new Cita();

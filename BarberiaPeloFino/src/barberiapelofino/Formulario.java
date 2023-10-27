@@ -133,7 +133,7 @@ public class Formulario {
                 manipularArchivos.verCitas();
                 break; 
              case 3:
-                manipularArchivos.eliminarCita(opcion);
+                manipularArchivos.eliminarCita();
                 break;
             case 4:
             {
